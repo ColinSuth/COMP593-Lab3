@@ -73,5 +73,7 @@ def export_order_to_excel(order_id, order_df, orders_dir):
 
     return
 
+    # Req 11 and 12
+
 if __name__ == '__main__':
     main()
