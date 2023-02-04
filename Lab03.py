@@ -56,9 +56,7 @@ def process_sales_data(sales_csv, orders_dir):
         grand_total = order_df['TOTAL PRICE'].sum()
         grand_total_df = pd.DataFrame({'ITEM PRICE': ['GRAND TOTAL'], 'TOTAL PRICE': [grand_total]})
         order_df = pd.concat([order_df, grand_total_df])
-
         export_order_to_excel(order_id, order_df, orders_dir)
-    
     return 
 
 def export_order_to_excel(order_id, order_df, orders_dir):
@@ -67,13 +65,23 @@ def export_order_to_excel(order_id, order_df, orders_dir):
     customer_name = re.sub(r'\W', '', customer_name)
     order_file = f'ORDER{order_id}_{customer_name}.xlsx'
     order_path = os.path.join(orders_dir, order_file)
-
     sheet_name = f'Order #{order_id}'
-    order_df.to_excel(order_path, index=False, sheet_name=sheet_name)
-
+    # Formating the code to put the $ sign and use 2 decimal spots
+    money_format = pd.ExcelWriter(order_path, engine='openpyxl')
+    order_df.style.format({'TOTAL PRICE': '${:,.2f}', 'ITEM PRICE': '${:,.2f}'}).to_excel(order_path, index=False, sheet_name=sheet_name)
+    # Making it so that the column widths match the image given in the lab
+    size = money_format.book.get_sheet_by_name(sheet_name)
+    size.column_dimensions['ORDER DATE'].width = 11
+    size.column_dimensions['ITEM NUMBER'].width = 13
+    size.column_dimensions['PRODUCT LINE'].width = 15
+    size.column_dimensions['PRODUCT CODE'].width = 15
+    size.column_dimensions['ITEM QUANTITY'].width = 15
+    size.column_dimensions['ITEM PRICE'].width = 13
+    size.column_dimensions['TOTAL PRICE'].width = 13
+    size.column_dimensions['STATUS'].width = 10
+    size.column_dimensions['CUSTOMER NAME'].width = 30
+    money_format.save()
     return
-
-    # Req 11 and 12
 
 if __name__ == '__main__':
     main()
