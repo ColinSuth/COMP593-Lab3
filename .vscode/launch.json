@@ -11,7 +11,7 @@
             "program": "Lab03.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["C:\\Colin_Temp\\COMP593-Lab3\\sales_data.csv"]
+            "args": ["C:\\Users\\Colin\\OneDrive\\Documents\\GitHub\\COMP593-Lab3\\sales_data.csv"]
         }
     ]
 }

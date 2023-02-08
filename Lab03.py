@@ -67,20 +67,21 @@ def export_order_to_excel(order_id, order_df, orders_dir):
     order_path = os.path.join(orders_dir, order_file)
     sheet_name = f'Order #{order_id}'
     # Formating the code to put the $ sign and use 2 decimal spots
-    money_format = pd.ExcelWriter(order_path, engine='openpyxl')
-    order_df.style.format({'TOTAL PRICE': '${:,.2f}', 'ITEM PRICE': '${:,.2f}'}).to_excel(order_path, index=False, sheet_name=sheet_name)
-    # Making it so that the column widths match the image given in the lab
-    size = money_format.book.get_sheet_by_name(sheet_name)
-    size.column_dimensions['ORDER DATE'].width = 11
-    size.column_dimensions['ITEM NUMBER'].width = 13
-    size.column_dimensions['PRODUCT LINE'].width = 15
-    size.column_dimensions['PRODUCT CODE'].width = 15
-    size.column_dimensions['ITEM QUANTITY'].width = 15
-    size.column_dimensions['ITEM PRICE'].width = 13
-    size.column_dimensions['TOTAL PRICE'].width = 13
-    size.column_dimensions['STATUS'].width = 10
-    size.column_dimensions['CUSTOMER NAME'].width = 30
-    money_format.save()
+    writer = pd.ExcelWriter(order_path, engine='xlsxwriter')
+    order_df.to_excel(writer, index=False, sheet_name=sheet_name)
+    workbook = writer.book
+    format_worksheet = writer.sheets[sheet_name]
+    money_fmt = workbook.add_format({'num_format': '$#,##0.00'})
+    format_worksheet.set_column(0, 0, 11, None)
+    format_worksheet.set_column(1, 1, 13, None)
+    format_worksheet.set_column(2, 2, 15, None)
+    format_worksheet.set_column(3, 3, 15, None)
+    format_worksheet.set_column(4, 4, 15, None)
+    format_worksheet.set_column(5, 5, 13, money_fmt)
+    format_worksheet.set_column(6, 6, 13, money_fmt)
+    format_worksheet.set_column(7, 7, 10, None)
+    format_worksheet.set_column(8, 8, 30, None)
+    writer.close()
     return
 
 if __name__ == '__main__':
